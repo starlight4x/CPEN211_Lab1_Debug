@@ -80,18 +80,18 @@ endmodule
 	
 module shifter_Test();
 
-reg [1:0] shift_t;
-reg [15:0] b_t;
+  reg [1:0] shift_t;
+  reg [15:0] b_t;
 
-wire [15:0] shift_out_t ;
+  wire [15:0] shift_out_t ;
 
-shifter #(2, 16) dut(
+  shifter #(2, 16) dut(
 	.shift(shift_t), 
 	.b(b_t), 
 	.shift_out(shift_out_t)
-);
+  );
 
-initial begin
+  initial begin
 
 	b_t = 16'b1111000011001111;
 	shift_t = 2'b00;
@@ -101,9 +101,91 @@ initial begin
 		shift_t = shift_t + 2'b01;
 		#10;
  	end
-end
-
+  end
 endmodule
+
+
+module regfile_Test();
+
+  reg write_t, clk_t;
+  reg [2:0] writenum_t, readnum_t;
+  reg [15:0] data_in_t;
+  
+  wire [15:0] data_out_t;
+
+  regfile dut(
+	.writenum(writenum_t), 
+	.readnum(readnum_t), 
+	.write(write_t), 
+	.data_in(data_in_t), 
+	.clk(clk_t), 
+	.data_out(data_out_t)
+  );
+
+  initial begin
+    clk_t = 1'b0;
+    #10;
+    forever begin
+      clk_t = 1'b1;
+      #10;
+      clk_t = 1'b0;
+      #10;
+    end
+  end
+
+  initial begin
+    data_in_t  = 16'd2;
+    writenum_t = 3'b000;
+    readnum_t  = 3'b111;
+    write_t    = 1'b0;
+    #100;
+    
+    repeat(7) begin                     //Attempting to write 2n to register n-1 (reg0->2, reg1->4, reg2->6 ,..., reg7->16)
+      data_in_t = data_in_t + 16'd2;    //This process is done in ascending order from reg0 to reg7
+      writenum_t = writenum_t + 3'b1; 
+      write_t = 1'b0;
+      #100;
+
+      write_t = 1'b1;
+      #100;
+    end					//Given this setup, reg0 should contain no values righ now
+
+    #500;
+
+    repeat(7) begin   
+      readnum_t = readnum_t - 3'b1; 	//Attempting to read register from reg7 to reg0
+      #100;
+    end
+					//Note: Check if reading of reg0 give undefined signal!
+    $stop;
+  end
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

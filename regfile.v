@@ -1,12 +1,11 @@
 module regfile (writenum, readnum, write, data_in, clk, data_out) ;
  
  //inputs and outputs for the register file
- 
+  input write ;
+  input clk ;
   input [2:0] writenum ;
   input [2:0] readnum ;
   input [15:0] data_in ;
-  input [0:0] write ;
-  input [0:0] clk ;
 
   output [15:0] data_out ;
 
