@@ -148,7 +148,7 @@ module regfile_Test();
 
       write_t = 1'b1;
       #100;
-    end					//Given this setup, reg0 should contain no values righ now
+    end					//Given this setup, reg0 should contain no values right now
 
     #500;
 

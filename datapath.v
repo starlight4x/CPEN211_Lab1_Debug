@@ -32,7 +32,7 @@ wire [0:0] status_in ; // output of ALU, input to status register
 
 //instantiatess 2 input mux with inputs: datapath_in, datapath_out and output: data_in --> output is input to register file
 
-Mux2in #(16) mux1(.in0(datapath_in), .in1(datapath_out), .sel(vsel), .out(data_in)) ; 
+Mux2in #(16) mux1 (.in0(datapath_in), .in1(datapath_out), .sel(vsel), .out(data_in)) ; 
 
 //instantiate regfile, output is data_out --> output is input to pipeline registers A and B 
 
@@ -45,7 +45,7 @@ dflipflop #(16) bpipe (.in(data_out), .clk(clk), .load(loadb), .out(bout)) ; //B
 
 //instatiates shifter, inputs: shift, bout (output of B pipeline register) and output: shift_out --> output is input to to bsel mux
 
-shifter #(16) shifter (.shift(shift), .b(bout), .shift_out(shift_out)) ;
+shifter #(2, 16) shifter (.shift(shift), .b(bout), .shift_out(shift_out)) ;
 
 //instantiates asel and bsel muxs
 
@@ -54,15 +54,15 @@ Mux2in #(16) muxbsel(.in0(shift_out), .in1({11'b0, datapath_in[4:0]}), .sel(bsel
 
 //instantiates ALU
 
-ALU #(16) alu (.ain(Ain), .bin(Bin), .alu_out(alu_out), .ALUop(ALUop), .status_in(status_in)) ;
+ALU #(16, 2) alu (.ain(Ain), .bin(Bin), .alu_out(alu_out), .ALUop(ALUop), .status_in(status_in)) ;
 
 //instantiates dflipflop. Creates load enabled pipeline register C
 
-dflipflop #(16) cpipe (.in(data_out), .clk(clk), .load(loadc), .out(datapath_out)) ; //C: datapath_out is input to datapath
+dflipflop #(16) cpipe (.in(alu_out), .clk(clk), .load(loadc), .out(datapath_out)) ; //C: datapath_out is input to datapath
 
 //instantiates dflipflop. Creates load enabled pipeline register Status
 
-dflipflop #(16) statuspipe (.in(status_in), .clk(clk), .load(loads), .out(status)) ;
+dflipflop #(1) statuspipe (.in(status_in), .clk(clk), .load(loads), .out(status)) ;
 
 endmodule
 
