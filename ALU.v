@@ -1,13 +1,13 @@
 module ALU (ain, bin, alu_out, ALUop, status_in);
 
 parameter m = 16 ;
-parameter n = 1 ;
+parameter n = 2 ;
 input [m-1:0] ain ;
 input [m-1:0] bin ;
-input [n:0] ALUop ;
+input [n-1:0] ALUop ;
 
 output reg [m-1:0] alu_out ;
-output reg [n-1:0] status_in ;
+output reg status_in ;
 
 always @ (*) begin
 	case(ALUop)
@@ -15,6 +15,7 @@ always @ (*) begin
 		2'b01: alu_out = ain - bin ;
 		2'b10: alu_out = ain & bin ;
 		2'b11: alu_out = ain ;
+		//default: alu_out = 16'b0;
 	endcase
 	if (alu_out == 16'b0)
 		status_in = 1'b1 ;
